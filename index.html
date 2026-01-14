@@ -31,7 +31,6 @@ body {
     position: relative;
 }
 
-/* BORDA DECORATIVA */
 .card::before {
     content: "";
     position: absolute;
@@ -39,10 +38,8 @@ body {
     border: 1px solid #e7dbc5;
     border-radius: 16px;
     pointer-events: none;
-    z-index: 0;
 }
 
-/* CONTEÚDO ACIMA DA BORDA */
 .card > * {
     position: relative;
     z-index: 1;
@@ -112,7 +109,7 @@ body {
     text-decoration: underline;
 }
 
-/* BOTÕES */
+/* BOTÃO */
 button {
     width: 100%;
     padding: 15px;
@@ -144,65 +141,11 @@ button:active {
     margin: 10px 0 20px;
 }
 
-input, textarea {
-    width: 100%;
-    padding: 12px;
-    border-radius: 14px;
-    border: 1px solid #ddd;
-    margin-bottom: 12px;
-    font-family: inherit;
-}
-
-/* GALERIA */
-.gallery {
-    column-count: 2;
-    column-gap: 12px;
-}
-
-.photo {
-    position: relative;
-}
-
-.photo img {
-    width: 100%;
-    border-radius: 14px;
-    margin-bottom: 12px;
-    box-shadow: 0 8px 18px rgba(0,0,0,0.15);
-}
-
-.remove {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    background: rgba(0,0,0,0.55);
-    color: white;
-    border-radius: 50%;
-    font-size: 12px;
-    padding: 4px 6px;
-    cursor: pointer;
-}
-
-/* MENSAGENS */
-.messages {
-    margin-top: 20px;
-}
-
-.message {
-    background: #faf6ee;
-    border-radius: 16px;
-    padding: 14px;
-    margin-bottom: 10px;
-}
-
-.message strong {
-    color: #8b6b3e;
-}
-
 .footer {
     text-align: center;
     font-size: 12px;
     color: #999;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 </style>
 </head>
@@ -243,21 +186,14 @@ input, textarea {
     <!-- ÁLBUM -->
     <div class="card">
         <div class="album-title">📸 Álbum do Casamento</div>
-        <div class="album-text">Compartilhe seus registros desse dia especial</div>
+        <div class="album-text">
+            Clique no botão abaixo para acessar e compartilhar
+            as fotos desse dia tão especial 💛
+        </div>
 
-        <input type="file" accept="image/*" multiple onchange="uploadFotos(event)">
-        <div class="gallery" id="gallery"></div>
-    </div>
-
-    <!-- MENSAGENS -->
-    <div class="card">
-        <div class="album-title">✍️ Mensagens aos Noivos</div>
-
-        <input type="text" id="nome" placeholder="Seu nome">
-        <textarea id="mensagem" rows="3" placeholder="Escreva sua mensagem"></textarea>
-        <button onclick="enviarMensagem()">ENVIAR MENSAGEM</button>
-
-        <div class="messages" id="messages"></div>
+        <a href="https://photos.app.goo.gl/oZve1Homs11qkfwdA" target="_blank">
+            <button>ABRIR ÁLBUM DE FOTOS</button>
+        </a>
 
         <div class="footer">
             Com amor, Osmar & Karina 💍
@@ -273,76 +209,6 @@ function confirmar() {
         "_blank"
     );
 }
-
-/* FOTOS */
-function uploadFotos(event) {
-    const files = event.target.files;
-    let photos = JSON.parse(localStorage.getItem("albumFotos")) || [];
-
-    for (let file of files) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            photos.push(e.target.result);
-            localStorage.setItem("albumFotos", JSON.stringify(photos));
-            carregarGaleria();
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-function removerFoto(index) {
-    let photos = JSON.parse(localStorage.getItem("albumFotos")) || [];
-    photos.splice(index, 1);
-    localStorage.setItem("albumFotos", JSON.stringify(photos));
-    carregarGaleria();
-}
-
-function carregarGaleria() {
-    const gallery = document.getElementById("gallery");
-    gallery.innerHTML = "";
-    const photos = JSON.parse(localStorage.getItem("albumFotos")) || [];
-
-    photos.forEach((src, i) => {
-        const div = document.createElement("div");
-        div.className = "photo";
-        div.innerHTML = `
-            <img src="${src}">
-            <div class="remove" onclick="removerFoto(${i})">🗑️</div>
-        `;
-        gallery.appendChild(div);
-    });
-}
-
-/* MENSAGENS */
-function enviarMensagem() {
-    const nome = document.getElementById("nome").value;
-    const msg = document.getElementById("mensagem").value;
-    if (!nome || !msg) return;
-
-    let msgs = JSON.parse(localStorage.getItem("mensagens")) || [];
-    msgs.push({ nome, msg });
-    localStorage.setItem("mensagens", JSON.stringify(msgs));
-
-    document.getElementById("nome").value = "";
-    document.getElementById("mensagem").value = "";
-    carregarMensagens();
-}
-
-function carregarMensagens() {
-    const box = document.getElementById("messages");
-    box.innerHTML = "";
-    const msgs = JSON.parse(localStorage.getItem("mensagens")) || [];
-
-    msgs.forEach(m => {
-        const div = document.createElement("div");
-        div.className = "message";
-        div.innerHTML = `<strong>${m.nome}</strong><br>${m.msg}`;
-        box.appendChild(div);
-    });
-}
-
-carregarGaleria();
-carregarMensagens();
 </script>
 
 </body>
